@@ -1,6 +1,6 @@
 import datetime
 from fastapi import APIRouter, HTTPException
-from models.users import User
+from models.users import User, UserLogin
 from config.database import users_collection
 from schema.schemas import individual_user, multiple_users
 from bson import ObjectId
@@ -30,4 +30,16 @@ async def post_user(user:User):
     return{
         "status": "ok",
         "message": "User added successfully",
+    }
+#TODO add JWT authentication to prod
+@users_router.post("/users/login")
+async def login_user(user:UserLogin):
+    db_user = await users_collection.find_one({"username": user.username})
+    if not db_user:
+        raise HTTPException(status_code=400,detail="User not found")
+    if not pwd_context.verify(user.password, db_user["password"]):
+        raise HTTPException(status_code=400,detail="Wrong password")
+    return{
+        "status": "ok",
+        "message": "User logged in"
     }
