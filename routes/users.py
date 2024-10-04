@@ -1,14 +1,13 @@
-import datetime
 from fastapi import APIRouter, HTTPException
 from models.users import User, UserLogin
 from config.database import users_collection
 from schema.schemas import individual_user, multiple_users
+from config.auth import ACCESS_TOKEN_EXPIRE_MINUTES, pwd_context, create_access_token
+
+from datetime import timedelta, datetime
 from bson import ObjectId
-from passlib.context import CryptContext
 
 users_router = APIRouter()
-
-pwd_context = CryptContext(schemes=["bcrypt"],deprecated="auto")
 
 # fetch all users
 @users_router.get("/users")
@@ -31,15 +30,20 @@ async def post_user(user:User):
         "status": "ok",
         "message": "User added successfully",
     }
-#TODO add JWT authentication to prod
+# login and authorize user
 @users_router.post("/users/login")
 async def login_user(user:UserLogin):
     db_user = await users_collection.find_one({"username": user.username})
     if not db_user:
-        raise HTTPException(status_code=400,detail="User not found")
+        raise HTTPException(status_code=400,detail="User not found", headers={"WWW-Authenticate": "Bearer"})
     if not pwd_context.verify(user.password, db_user["password"]):
-        raise HTTPException(status_code=400,detail="Wrong password")
+        raise HTTPException(status_code=400,detail="Wrong password", headers={"WWW-Authenticate": "Bearer"})
+    # TODO here add https://youtu.be/YpvcqxYiyNE?si=q-hEBQgyzw38_wWy&t=321 what is there
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": user.username}, expires_delta=access_token_expires
+    )
     return{
-        "status": "ok",
-        "message": "User logged in"
+        "access_token": access_token,
+        "token_type": "bearer"
     }
