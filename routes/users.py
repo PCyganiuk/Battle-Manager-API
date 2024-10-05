@@ -1,17 +1,27 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends, status
 from models.users import User, UserLogin
 from config.database import users_collection
 from schema.schemas import individual_user, multiple_users
-from config.auth import ACCESS_TOKEN_EXPIRE_MINUTES, pwd_context, create_access_token
+from config.auth import ACCESS_TOKEN_EXPIRE_MINUTES, pwd_context,oauth2_scheme, create_access_token, decode_access_token
 
 from datetime import timedelta, datetime
 from bson import ObjectId
 
 users_router = APIRouter()
 
+async def get_current_user(token: str = Depends(oauth2_scheme)):
+    payload = decode_access_token(token)
+    if payload is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid token",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    return payload
+
 # fetch all users
 @users_router.get("/users")
-async def get_users():
+async def get_users(current_user: dict = Depends(get_current_user)):
     users = await multiple_users(users_collection.find({}))
     return users
 
@@ -30,6 +40,7 @@ async def post_user(user:User):
         "status": "ok",
         "message": "User added successfully",
     }
+
 # login and authorize user
 @users_router.post("/users/login")
 async def login_user(user:UserLogin):

@@ -9,3 +9,9 @@ def individual_user(user) -> dict:
 
 async def multiple_users(users) -> list:
     return [individual_user(user) async for user in users]
+
+def individual_game(game) -> dict:
+    return{
+        "id": str(game["_id"]),
+
+    }
