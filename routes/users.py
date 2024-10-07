@@ -2,28 +2,31 @@ from fastapi import APIRouter, HTTPException, Depends, status
 from models.users import User, UserLogin
 from config.database import users_collection
 from schema.schemas import individual_user, multiple_users
-from config.auth import ACCESS_TOKEN_EXPIRE_MINUTES, pwd_context,oauth2_scheme, create_access_token, decode_access_token
+from config.auth import ACCESS_TOKEN_EXPIRE_MINUTES, pwd_context, create_access_token, decode_access_token, get_current_user
 
 from datetime import timedelta, datetime
 from bson import ObjectId
 
 users_router = APIRouter()
 
-async def get_current_user(token: str = Depends(oauth2_scheme)):
-    payload = decode_access_token(token)
-    if payload is None:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid token",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-    return payload
-
 # fetch all users
 @users_router.get("/users")
 async def get_users(current_user: dict = Depends(get_current_user)):
     users = await multiple_users(users_collection.find({}))
     return users
+
+@users_router.get("/users/{user_id}")
+async def get_user_by_id(user_id: str, current_user: dict = Depends(get_current_user)):
+    try:
+        object_id = ObjectId(user_id)
+    except:
+        raise HTTPException(status_code=400, detail="Invalid user ID format")
+    
+    user = await users_collection.find_one({"_id": object_id})
+    user["_id"] = str(user["_id"])
+    if user:
+        return user
+    raise HTTPException(status_code=404, detail="User not found")
 
 # register new user
 @users_router.post("/users/register")
@@ -56,5 +59,6 @@ async def login_user(user:UserLogin):
     )
     return{
         "access_token": access_token,
-        "token_type": "bearer"
+        "token_type": "bearer",
+        "user_id": str(db_user["_id"])
     }

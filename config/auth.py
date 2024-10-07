@@ -1,5 +1,5 @@
 import os
-
+from fastapi import APIRouter, HTTPException, Depends, status
 from jose import JWSError, jwt, JWTError
 from datetime import timedelta, datetime, timezone
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
@@ -29,3 +29,13 @@ def decode_access_token(token: str):
         return payload
     except JWTError:
         return None
+    
+async def get_current_user(token: str = Depends(oauth2_scheme)):
+    payload = decode_access_token(token)
+    if payload is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid token",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    return payload
