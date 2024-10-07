@@ -1,11 +1,10 @@
-from fastapi import APIRouter, HTTPException, Depends, status
 from models.games import Game
 from config.database import games_collection
 from schema.schemas import individual_game, multiple_games
 from config.auth import get_current_user
 
-from datetime import timedelta, datetime
 from bson import ObjectId
+from fastapi import APIRouter, HTTPException, Depends
 
 games_router = APIRouter()
 
@@ -29,7 +28,7 @@ async def get_user_games(owner_id: str, current_user: dict = Depends(get_current
 async def create_new_game(game: Game):
     game = dict(game)
     game["owner_id"] = ObjectId(game["owner_id"])
-    games_collection.insert_one(game)
+    await games_collection.insert_one(game)
     return{
         "status": "ok",
         "message": "Game created successfully",

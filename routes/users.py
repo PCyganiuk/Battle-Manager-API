@@ -1,4 +1,3 @@
-from fastapi import APIRouter, HTTPException, Depends, status
 from models.users import User, UserLogin
 from config.database import users_collection
 from schema.schemas import individual_user, multiple_users
@@ -6,6 +5,7 @@ from config.auth import ACCESS_TOKEN_EXPIRE_MINUTES, pwd_context, create_access_
 
 from datetime import timedelta, datetime
 from bson import ObjectId
+from fastapi import APIRouter, HTTPException, Depends
 
 users_router = APIRouter()
 

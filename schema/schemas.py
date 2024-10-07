@@ -25,3 +25,32 @@ def individual_game(game) -> dict:
 
 async def multiple_games(games) -> list:
     return [individual_game(game) async for game in games]
+
+def individual_pawn(pawn) -> dict:
+    return{
+        "id": str(pawn["_id"]),
+        "pawn_name": pawn["pawn_name"],
+        "pos_x": pawn["pos_x"],
+        "pos_y": pawn["pos_y"],
+        "dimension_x": pawn["dimension_x"],
+        "dimension_y": pawn["dimension_y"],
+        "hit_points": pawn["hit_points"],
+        "initiative": pawn["initiative"],
+        "attack_bonus": pawn["attack_bonus"],
+        "damage_bonus": pawn["damage_bonus"],
+        "armor_class": pawn["armor_class"],
+        "strength": pawn["strength"],
+        "dexterity": pawn["dexterity"],
+        "constitution": pawn["constitution"],
+        "intelligence": pawn["intelligence"],
+        "wisdom": pawn["wisdom"],
+        "charisma": pawn["charisma"],
+        "speed": pawn["speed"],
+        "game_id": pawn["game_id"],
+        "picture_id": pawn["picture_id"],
+        "ai_enabled": pawn["ai_enabled"],
+        "player_character": pawn["player_character"],
+    }
+
+async def multiple_pawns(pawns) -> list:
+    return [individual_pawn(pawn) async for pawn in pawns]

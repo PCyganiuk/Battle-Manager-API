@@ -5,3 +5,4 @@ client = AsyncIOMotorClient(f'mongodb+srv://{os.getenv("mongodb_username")}:{os.
 db = client["Battle-manager"]
 users_collection = db["Users"]
 games_collection = db["Games"]
+pawns_collection = db["Pawns"]
