@@ -27,3 +27,20 @@ class Pawn(BaseModel):
 class PawnCords(BaseModel):
     pos_x: int
     pos_y: int
+
+class PawnInfo(BaseModel):
+    dimension_x: Optional[int] = None
+    dimension_y: Optional[int] = None
+    hit_points: Optional[int] = None
+    initiative: Optional[int] = None
+    attack_bonus: Optional[int] = None
+    damage_bonus: Optional[int] = None
+    armor_class: Optional[int] = None
+    strength: Optional[int] = None
+    dexterity: Optional[int] = None
+    constitution: Optional[int] = None
+    intelligence: Optional[int] = None
+    wisdom: Optional[int] = None
+    charisma: Optional[int] = None
+    speed: Optional[int] = None
+    player_character: Optional[str] = None

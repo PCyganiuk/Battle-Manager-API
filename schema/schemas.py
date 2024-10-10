@@ -20,6 +20,8 @@ def individual_game(game) -> dict:
         "current_turn": str(game["current_turn"]) if game["current_turn"] else None,
         "initiative_list": [str(player) for player in game["initiative_list"]],
         "picture_id": str(game["picture_id"]) if game["picture_id"] else None,
+        "picture_dimension_x": game["picture_dimension_x"] if game["picture_dimension_x"] else None,
+        "picture_dimension_y": game["picture_dimension_y"] if game["picture_dimension_y"] else None,
         "player_list": [str(player) for player in game["player_list"]],
     }
 
@@ -47,9 +49,9 @@ def individual_pawn(pawn) -> dict:
         "charisma": pawn["charisma"],
         "speed": pawn["speed"],
         "game_id": pawn["game_id"],
-        "picture_id": pawn["picture_id"],
+        "picture_id": str(pawn["picture_id"] if pawn["picture_id"] else None),
         "ai_enabled": pawn["ai_enabled"],
-        "player_character": pawn["player_character"],
+        "player_character": str(pawn["player_character"] if pawn["player_character"] else None),
     }
 
 async def multiple_pawns(pawns) -> list:
