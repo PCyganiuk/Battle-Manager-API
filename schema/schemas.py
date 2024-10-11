@@ -56,3 +56,10 @@ def individual_pawn(pawn) -> dict:
 
 async def multiple_pawns(pawns) -> list:
     return [individual_pawn(pawn) async for pawn in pawns]
+
+def individual_picture(picture) -> dict:
+    return{
+        "id": str(picture["_id"]),
+        "game_id": str(picture["game_id"]),
+        "picture_content": picture["picture_content"],
+    }

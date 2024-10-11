@@ -27,7 +27,10 @@ async def get_user_games(owner_id: str, current_user: dict = Depends(get_current
 @games_router.post("/games/create")
 async def create_new_game(game: Game):
     game = dict(game)
-    game["owner_id"] = ObjectId(game["owner_id"])
+    try:
+        game["owner_id"] = ObjectId(game["owner_id"])
+    except:
+        raise HTTPException(status_code=400, detail="Invalid user ID format")
     await games_collection.insert_one(game)
     return{
         "status": "ok",
