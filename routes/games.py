@@ -17,7 +17,6 @@ async def get_user_games(owner_id: str, current_user: dict = Depends(get_current
     
     games = await multiple_games(games_collection.find({"owner_id": object_id}))
     for game in games:
-        print(game)
         game["id"] = str(game["id"])
         game["owner_id"] = str(game["owner_id"])
     if games:

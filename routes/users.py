@@ -52,7 +52,6 @@ async def login_user(user:UserLogin):
         raise HTTPException(status_code=400,detail="User not found", headers={"WWW-Authenticate": "Bearer"})
     if not pwd_context.verify(user.password, db_user["password"]):
         raise HTTPException(status_code=400,detail="Wrong password", headers={"WWW-Authenticate": "Bearer"})
-    # TODO here add https://youtu.be/YpvcqxYiyNE?si=q-hEBQgyzw38_wWy&t=321 what is there
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
         data={"sub": user.username}, expires_delta=access_token_expires

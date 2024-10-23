@@ -16,7 +16,8 @@ app.include_router(pawns_router)
 app.include_router(pictures_router)
 
 origins = [
-    "link to frontend" #TODO change link to frontend when ready
+    "http://localhost:5173",
+    "http://127.0.0.1:5173" #TODO change link to frontend when ready
 ]
 
 app.add_middleware(
