@@ -49,17 +49,10 @@ def individual_pawn(pawn) -> dict:
         "charisma": pawn["charisma"],
         "speed": pawn["speed"],
         "game_id": pawn["game_id"],
-        "picture_id": str(pawn["picture_id"] if pawn["picture_id"] else None),
+        "picture": str(pawn["picture"] if pawn["picture"] else None),
         "ai_enabled": pawn["ai_enabled"],
         "player_character": str(pawn["player_character"] if pawn["player_character"] else None),
     }
 
 async def multiple_pawns(pawns) -> list:
     return [individual_pawn(pawn) async for pawn in pawns]
-
-def individual_picture(picture) -> dict:
-    return{
-        "id": str(picture["_id"]),
-        "game_id": str(picture["game_id"]),
-        "picture_content": picture["picture_content"],
-    }

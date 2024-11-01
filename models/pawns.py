@@ -20,7 +20,7 @@ class Pawn(BaseModel):
     charisma: Optional[int]
     speed: Optional[int]
     game_id: str
-    picture_id: Optional[str]
+    picture: Optional[str]
     ai_enabled: bool
     player_character: Optional[str]
 
