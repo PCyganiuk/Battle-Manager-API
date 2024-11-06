@@ -2,6 +2,7 @@ from models.games import Game
 from config.database import games_collection
 from schema.schemas import individual_game, multiple_games
 from config.auth import get_current_user
+from routes.pawns import websocket_connection
 
 from bson import ObjectId
 from fastapi import APIRouter, HTTPException, Depends
@@ -121,3 +122,22 @@ async def set_current_turn(game_id: str, pawn_id: str):
         "status": "ok",
         "message": "Set new current pawn",
     }
+
+@games_router.patch("/games/{game_id}/is-fog/{is_fog}")
+async def set_is_fog(game_id: str, is_fog: bool):
+    try:
+        game_object_id = ObjectId(game_id)
+    except Exception:
+         raise HTTPException(status_code=400, detail="Invalid game ID format")
+    game = await games_collection.find_one({"_id": game_object_id})
+    if game["is_fog"] != is_fog :
+        result = await games_collection.update_one(
+            {"_id": game_object_id},
+            {"$set": {"is_fog": is_fog}}
+        )
+        await websocket_connection.broadcast({"event": "is_fog_changed", "data": is_fog}, game_id=str(game_object_id))
+    return{
+        "status": "ok",
+        "message": "Updated fog",
+    }
+    

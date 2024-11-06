@@ -23,6 +23,7 @@ def individual_game(game) -> dict:
         "picture_dimension_x": game["picture_dimension_x"] if game["picture_dimension_x"] else None,
         "picture_dimension_y": game["picture_dimension_y"] if game["picture_dimension_y"] else None,
         "player_list": [str(player) for player in game["player_list"]],
+        "is_fog": game["is_fog"],
     }
 
 async def multiple_games(games) -> list:
