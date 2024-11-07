@@ -57,3 +57,17 @@ def individual_pawn(pawn) -> dict:
 
 async def multiple_pawns(pawns) -> list:
     return [individual_pawn(pawn) async for pawn in pawns]
+
+def individual_obstacle(obstacle) -> dict:
+    return{
+        "id": str(obstacle["_id"]),
+        "pos_x": obstacle["pos_x"],
+        "pos_y": obstacle["pos_y"],
+        "width": obstacle["width"],
+        "height": obstacle["height"],
+        "game_id": obstacle["game_id"],
+        "color": obstacle["color"]
+    }
+
+async def multiple_obstacles(obstacles) -> list:
+    return [individual_obstacle(obstacle) async for obstacle in obstacles]

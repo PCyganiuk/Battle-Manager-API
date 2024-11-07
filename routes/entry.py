@@ -6,6 +6,6 @@ entry_router = APIRouter()
 def entry():
     res = {
         "status" : "ok" ,
-        "message" : "Api is runinng"
+        "message" : "Hey you are finally awake The Api is already runinng"
     }
     return res
