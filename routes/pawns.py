@@ -101,8 +101,8 @@ async def modify_pawn_pos(pawn_id: str, pawn_cords: PawnCords):
         "detail": " Pawn coordinates updated successfully"
     }
 
-@pawns_router.patch("/pawns/modify-pawn/{pawn_id}")
-async def modify_pawn_info(pawn_id: str, pawn: PawnInfo):
+@pawns_router.patch("/{game_id}pawns/modify-pawn/{pawn_id}")
+async def modify_pawn_info(game_id: str, pawn_id: str, pawn: PawnInfo):
     try:
         pawn_object_id = ObjectId(pawn_id)
     except:
@@ -112,13 +112,17 @@ async def modify_pawn_info(pawn_id: str, pawn: PawnInfo):
     if not db_pawn:
         raise HTTPException(status_code=400, detail="Pawn not found")
     update_data = {k: v for k, v in pawn.model_dump(exclude_unset=True).items()}
+    transformed_data = [
+        {"stat": stat, "value": value} 
+        for stat, value in update_data.items()
+    ]
     result = await pawns_collection.update_one(
         {"_id": pawn_object_id},
         {"$set": update_data}
     )
     if result.modified_count == 0:
         raise HTTPException(status_code=400, detail="Update failed")
-
+    await websocket_connection.broadcast({"event": "pawn_stat_updated", "pawn_id": pawn_id, "data": transformed_data}, game_id)
     return {
         "status": "ok",
         "detail": " Pawn info updated successfully"

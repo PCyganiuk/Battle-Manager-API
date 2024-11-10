@@ -18,7 +18,10 @@ def individual_game(game) -> dict:
         "dimension_x": game["dimension_x"],
         "dimension_y": game["dimension_y"],
         "current_turn": str(game["current_turn"]) if game["current_turn"] else None,
-        "initiative_list": [str(player) for player in game["initiative_list"]],
+        "initiative_list": [
+            {"name": pawn["name"], "initiative": pawn["initiative"]} 
+            for pawn in game["initiative_list"]
+        ],
         "picture_id": game["picture_id"],
         "picture_dimension_x": game["picture_dimension_x"] if game["picture_dimension_x"] else None,
         "picture_dimension_y": game["picture_dimension_y"] if game["picture_dimension_y"] else None,
