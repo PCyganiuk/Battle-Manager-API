@@ -1,4 +1,4 @@
-from models.pawns import Pawn, PawnCords, PawnInfo
+from models.pawns import Pawn, PawnCords, PawnInfo, PawnPicture
 from config.database import pawns_collection
 from schema.schemas import individual_pawn, multiple_pawns
 from config.auth import get_current_user
@@ -101,7 +101,7 @@ async def modify_pawn_pos(pawn_id: str, pawn_cords: PawnCords):
         "detail": " Pawn coordinates updated successfully"
     }
 
-@pawns_router.patch("/{game_id}pawns/modify-pawn/{pawn_id}")
+@pawns_router.patch("/{game_id}/pawns/modify-pawn/{pawn_id}")
 async def modify_pawn_info(game_id: str, pawn_id: str, pawn: PawnInfo):
     try:
         pawn_object_id = ObjectId(pawn_id)
@@ -127,3 +127,25 @@ async def modify_pawn_info(game_id: str, pawn_id: str, pawn: PawnInfo):
         "status": "ok",
         "detail": " Pawn info updated successfully"
     }   
+
+@pawns_router.patch("/{game_id}/pawns/modify-picture/{pawn_id}")
+async def modify_pawn_picture(game_id: str, pawn_id: str, picture: PawnPicture):
+    try:
+        pawn_object_id = ObjectId(pawn_id)
+    except:
+        raise HTTPException(status_code=400, detail="Invalid pawn ID format")
+    
+    db_pawn = await pawns_collection.find_one({"_id": pawn_object_id})
+    if not db_pawn:
+        raise HTTPException(status_code=400, detail="Pawn not found")
+    result = await pawns_collection.update_one(
+        {"_id": pawn_object_id},
+        {"$set": {"picture": picture.picture}},
+    )
+    if result.modified_count == 0:
+        raise HTTPException(status_code=400, detail="Update failed")
+    await websocket_connection.broadcast({"event": "pawn_picture_updated", "pawn_id": pawn_id, "data": {"picture": picture.picture}}, game_id)
+    return {
+        "status": "ok",
+        "detail": " Pawn picture updated successfully"
+    }

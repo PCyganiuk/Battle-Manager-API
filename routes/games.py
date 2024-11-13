@@ -1,4 +1,4 @@
-from models.games import Game
+from models.games import Game, InitiativeItem
 from config.database import games_collection
 from schema.schemas import individual_game, multiple_games
 from config.auth import get_current_user
@@ -140,4 +140,52 @@ async def set_is_fog(game_id: str, is_fog: bool):
         "status": "ok",
         "message": "Updated fog",
     }
+
+@games_router.patch("/games/{game_id}/add-to-initiative")
+async def add_to_initiative(game_id: str, pawn: InitiativeItem):
+    game = await games_collection.find_one({"_id": ObjectId(game_id)})
+
+    if not game:
+        raise HTTPException(status_code=404, detail="Game not found")
+
+    # Check if the pawn already exists in initiative_list
+    if any(p["name"] == pawn.name for p in game["initiative_list"]):
+        raise HTTPException(
+            status_code=400, detail="Pawn is already in the initiative list"
+        )
+    await websocket_connection.broadcast({"event": "pawn_added_to_initiative", "data": pawn.model_dump_json()}, game_id=str(game_id))
     
+    updated_initiative_list = game["initiative_list"] + [pawn.dict()]
+    updated_initiative_list.sort(key=lambda p: p["initiative"], reverse=True)
+
+    update_result = await games_collection.update_one(
+        {"_id": ObjectId(game_id)},
+        {"$set": {"initiative_list": updated_initiative_list}}
+    )
+
+    if update_result.modified_count == 0:
+        raise HTTPException(
+            status_code=500, detail="Failed to add pawn to initiative list"
+        )
+
+    return {"detail": "Pawn added to initiative list successfully"}
+
+@games_router.delete("/games/{game_id}/delete-from-initiative/{pawn_name}")
+async def delete_from_initiative(game_id: str, pawn_name: str):
+    game = await games_collection.find_one({"_id": ObjectId(game_id)})
+    if not game:
+        raise HTTPException(status_code=404, detail="Game not found")
+
+    new_initiative_list = [
+        item for item in game["initiative_list"] if item["name"] != pawn_name
+    ]
+
+    update_result = await games_collection.update_one(
+        {"_id": ObjectId(game_id)},
+        {"$set": {"initiative_list": new_initiative_list}}
+    )
+
+    if update_result.modified_count == 0:
+        raise HTTPException(status_code=404, detail="Pawn not found in initiative list")
+
+    return {"detail": "Pawn removed from initiative list"}

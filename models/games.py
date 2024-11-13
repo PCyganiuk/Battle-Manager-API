@@ -4,6 +4,7 @@ from typing import Optional
 class InitiativeItem(BaseModel):
     name:str
     initiative: int
+    ai_enabled: bool
 
 class Game(BaseModel):
     game_name: str

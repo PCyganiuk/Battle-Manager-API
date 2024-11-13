@@ -43,4 +43,8 @@ class PawnInfo(BaseModel):
     wisdom: Optional[int] = None
     charisma: Optional[int] = None
     speed: Optional[int] = None
+    picture: Optional[str] = None
     player_character: Optional[str] = None
+
+class PawnPicture(BaseModel):
+    picture: str
