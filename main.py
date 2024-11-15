@@ -18,7 +18,7 @@ app.include_router(obstacles_router)
 origins = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
-    "battle-manager-client.vercel.app"
+    "https://battle-manager-client.vercel.app",
 ]
 
 app.add_middleware(
