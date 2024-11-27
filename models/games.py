@@ -14,7 +14,5 @@ class Game(BaseModel):
     current_turn: Optional[str]
     initiative_list: list[InitiativeItem]
     picture_id: Optional[str]
-    picture_dimension_x: Optional[float]
-    picture_dimension_y: Optional[float]
     player_list: list[str]
     is_fog: bool

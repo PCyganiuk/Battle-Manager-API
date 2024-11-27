@@ -23,8 +23,6 @@ def individual_game(game) -> dict:
             for pawn in game["initiative_list"]
         ],
         "picture_id": game["picture_id"],
-        "picture_dimension_x": game["picture_dimension_x"] if game["picture_dimension_x"] else None,
-        "picture_dimension_y": game["picture_dimension_y"] if game["picture_dimension_y"] else None,
         "player_list": [str(player) for player in game["player_list"]],
         "is_fog": game["is_fog"],
     }
