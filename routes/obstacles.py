@@ -1,6 +1,6 @@
 from models.obstacles import Obstacle, ObstacleCords
 from config.database import obstacles_collection
-from schema.schemas import individual_obstacle, multiple_obstacles
+from schema.schemas import multiple_obstacles
 from config.auth import get_current_user
 from routes.pawns import websocket_connection
 

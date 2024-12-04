@@ -1,6 +1,6 @@
 from models.games import Game, InitiativeItem
 from config.database import games_collection
-from schema.schemas import individual_game, multiple_games
+from schema.schemas import multiple_games
 from config.auth import get_current_user
 from routes.pawns import websocket_connection
 

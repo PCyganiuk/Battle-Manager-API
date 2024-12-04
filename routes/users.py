@@ -1,6 +1,6 @@
 from models.users import User, UserLogin
 from config.database import users_collection
-from schema.schemas import individual_user, multiple_users
+from schema.schemas import multiple_users
 from config.auth import ACCESS_TOKEN_EXPIRE_MINUTES, pwd_context, create_access_token, decode_access_token, get_current_user
 
 from datetime import timedelta, datetime
