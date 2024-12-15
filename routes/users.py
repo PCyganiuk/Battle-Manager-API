@@ -3,7 +3,7 @@ from config.database import users_collection
 from schema.schemas import multiple_users
 from config.auth import ACCESS_TOKEN_EXPIRE_MINUTES, pwd_context, create_access_token, decode_access_token, get_current_user
 
-from datetime import timedelta, datetime
+from datetime import timedelta, date
 from bson import ObjectId
 from fastapi import APIRouter, HTTPException, Depends
 
@@ -34,10 +34,10 @@ async def post_user(user:User):
     if await users_collection.find_one({"username": user.username}):
         raise HTTPException(status_code=400, detail="Username already exists")
     if await users_collection.find_one({"email": user.email}):
-        raise HTTPException(status_code=400, detail="account with that email already exists")
+        raise HTTPException(status_code=400, detail="Account with that email already exists")
     user = dict(user)
     user["password"] = pwd_context.hash(user["password"])
-    user["join_date"] = str(datetime.date.today())
+    user["join_date"] = str(date.today())
     await users_collection.insert_one(user)
     return{
         "status": "ok",
