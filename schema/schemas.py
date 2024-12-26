@@ -25,6 +25,7 @@ def individual_game(game) -> dict:
         "picture_id": game["picture_id"],
         "player_list": [str(player) for player in game["player_list"]],
         "is_fog": game["is_fog"],
+        "access_code": game["access_code"],
     }
 
 async def multiple_games(games) -> list:

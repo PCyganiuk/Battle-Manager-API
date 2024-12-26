@@ -16,3 +16,4 @@ class Game(BaseModel):
     picture_id: Optional[str]
     player_list: list[str]
     is_fog: bool
+    access_code: int

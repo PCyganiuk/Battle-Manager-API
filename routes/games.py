@@ -189,3 +189,38 @@ async def delete_from_initiative(game_id: str, pawn_name: str):
         raise HTTPException(status_code=404, detail="Pawn not found in initiative list")
 
     return {"detail": "Pawn removed from initiative list"}
+
+@games_router.patch("/games/{access_code}/join/{user_id}")
+async def join_game(access_code: int, user_id: str):
+    game = await games_collection.find_one({"access_code": access_code})
+    
+    if not game:
+        raise HTTPException(
+            status_code=404,
+            detail="Game not found."
+        )
+
+    # Check if the user is already in the player_list
+    if user_id in game.get("player_list", []):
+        raise HTTPException(
+            status_code=400,
+            detail="User is already part of the game."
+        )
+
+    # Add the user to the player_list
+    updated_player_list = game.get("player_list", [])
+    updated_player_list.append(user_id)
+
+    # Update the game in the database
+    result = await games_collection.update_one(
+        {"access_code": access_code},
+        {"$set": {"player_list": updated_player_list}}
+    )
+
+    if result.modified_count == 0:
+        raise HTTPException(
+            status_code=500,
+            detail="Failed to update the game."
+        )
+
+    return {"message": "User successfully added to the game."}
